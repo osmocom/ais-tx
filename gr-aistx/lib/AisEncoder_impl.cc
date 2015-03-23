@@ -46,24 +46,33 @@ namespace gr {
   namespace AISTX {
 
     AisEncoder::sptr
-    AisEncoder::make(bool enable_NRZI)
+    AisEncoder::make(bool enable_NRZI, unsigned int num_lead_in_syms)
     {
       return gnuradio::get_initial_sptr
-        (new AisEncoder_impl(enable_NRZI));
+        (new AisEncoder_impl(enable_NRZI, num_lead_in_syms));
     }
 
     /*
      * The private constructor
      */
-    AisEncoder_impl::AisEncoder_impl(bool enable_NRZI)
+    AisEncoder_impl::AisEncoder_impl(bool enable_NRZI, unsigned int num_lead_in_syms)
       : block("AIS Payload to Symbols Encoder",
 		      io_signature::make(0, 0, 0),
 		      io_signature::make(0, 0, 0)),
-		      d_enable_NRZI(enable_NRZI)
+		      d_enable_NRZI(enable_NRZI),
+		      d_num_lead_in_syms(num_lead_in_syms)
     {
     	message_port_register_out(pmt::mp("pdus"));
 	message_port_register_in(pmt::mp("pdus"));
 	set_msg_handler(pmt::mp("pdus"), boost::bind(&AisEncoder_impl::handle_msg, this, _1));
+
+	if (d_num_lead_in_syms) {
+		/* round up to the next byte boundary */
+		if (d_num_lead_in_syms % 8)
+			d_num_lead_in_syms += d_num_lead_in_syms % 8;
+		/* empty vector for lead-in */
+		d_lead_in_bytes = pmt::make_u8vector(d_num_lead_in_syms/8, 0);
+	}
     }
 
 
@@ -379,9 +388,6 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 		// reverse
 		reverse_bit_order(payload, len_payload+LEN_CRC);
 
-			uint8_t dummy_frame[255];
-			memset(dummy_frame, 0, sizeof(dummy_frame));
-
 		// stuffing (payload + crc)
 		if (len_payload <= 168) {
 
@@ -416,7 +422,8 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 			byte_packing(frame, byte_frame, len_frame_real);
 
 			/* sed some blank message before (to clean up GMSK modulator state?) */
-			message_port_pub(pmt::mp("pdus"), pmt::cons(meta, make_pdu_vector(blocks::pdu::byte_t, dummy_frame, sizeof(dummy_frame))));
+			if (d_lead_in_bytes)
+				message_port_pub(pmt::mp("pdus"), pmt::cons(meta, d_lead_in_bytes));
 
 			// output
 			pmt::pmt_t outpdu_bytes = make_pdu_vector(blocks::pdu::byte_t, byte_frame, len_frame_real/8);

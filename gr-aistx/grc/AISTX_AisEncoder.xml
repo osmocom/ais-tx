@@ -4,7 +4,7 @@
   <key>AisEncoder</key>
   <category>AISTX</category>
   <import>import AISTX</import>
-  <make>AISTX.AisEncoder($enable_NRZI)</make>
+  <make>AISTX.AisEncoder($enable_NRZI, $num_lead_in_syms)</make>
    <param>
 	<name>Enable_NRZI_Conversion</name>
 	<key>enable_NRZI</key>
@@ -18,6 +18,12 @@
 		<name>No</name>
 		<key>False</key>
 	</option>
+  </param>
+  <param>
+	<name>Number of Lead-In Symbols</name>
+	<key>num_lead_in_syms</key>
+	<value>256</value>
+	<type>int</type>
   </param>
   <sink>
     <name>pdus</name>

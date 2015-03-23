@@ -32,10 +32,13 @@ namespace gr {
     class AisEncoder_impl : public AisEncoder
     {
      private:
-		bool d_enable_NRZI;
+	bool d_enable_NRZI;
+	unsigned int d_num_lead_in_syms;
+	pmt::pmt_t d_lead_in_bytes;
+
 
      public:
-	AisEncoder_impl(bool enable_NRZI);
+	AisEncoder_impl(bool enable_NRZI, unsigned int num_lead_in_syms);
         ~AisEncoder_impl();
 
 		void dump_buffer(const char *b, int buffer_size);

@@ -52,7 +52,7 @@ namespace gr {
        * 6. NRZI conversion (enabled by default)
        *
        */
-      static sptr make(bool enable_NRZI);
+      static sptr make(bool enable_NRZI, unsigned int num_lead_in_syms);
     };
 
   } // namespace AISTX
