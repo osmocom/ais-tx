@@ -27,10 +27,11 @@ link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND AISTX_sources
     nrz_to_nrzi_impl.cc
     Build_Frame_impl.cc
+    AisEncoder_impl.cc
     DebugME_impl.cc )
 
 add_library(gnuradio-AISTX SHARED ${AISTX_sources})
-target_link_libraries(gnuradio-AISTX ${Boost_LIBRARIES} ${GNURADIO_RUNTIME_LIBRARIES})
+target_link_libraries(gnuradio-AISTX ${Boost_LIBRARIES} ${GNURADIO_RUNTIME_LIBRARIES} ${GNURADIO_BLOCKS_LIBRARIES})
 set_target_properties(gnuradio-AISTX PROPERTIES DEFINE_SYMBOL "gnuradio_AISTX_EXPORTS")
 
 ########################################################################
@@ -59,6 +60,7 @@ add_executable(test-AISTX ${test_AISTX_sources})
 target_link_libraries(
   test-AISTX
   ${GNURADIO_RUNTIME_LIBRARIES}
+  ${GNURADIO_BLOCKS_LIBRARIES}
   -lvolk
   ${Boost_LIBRARIES}
   ${CPPUNIT_LIBRARIES}

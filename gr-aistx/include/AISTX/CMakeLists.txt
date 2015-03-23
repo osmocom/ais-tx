@@ -24,5 +24,6 @@ install(FILES
     api.h
     nrz_to_nrzi.h
     Build_Frame.h
+    AisEncoder.h
     DebugME.h DESTINATION include/AISTX
 )

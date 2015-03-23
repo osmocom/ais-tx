@@ -19,5 +19,6 @@
 install(FILES
     AISTX_nrz_to_nrzi.xml
     AISTX_Build_Frame.xml
+    AISTX_AisEncoder.xml
     AISTX_DebugME.xml DESTINATION share/gnuradio/grc/blocks
 )

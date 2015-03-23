@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<block>
+  <name>AIS Encoder</name>
+  <key>AisEncoder</key>
+  <category>AISTX</category>
+  <import>import AISTX</import>
+  <make>AISTX.AisEncoder($enable_NRZI)</make>
+   <param>
+	<name>Enable_NRZI_Conversion</name>
+	<key>enable_NRZI</key>
+	<value>True</value>
+	<type>enum</type>
+	<option>
+		<name>Yes</name>
+		<key>True</key>
+	</option>
+	<option>
+		<name>No</name>
+		<key>False</key>
+	</option>
+  </param>
+  <sink>
+    <name>pdus</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+  <source>
+    <name>pdus</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+</block>
