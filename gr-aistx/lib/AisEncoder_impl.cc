@@ -395,7 +395,7 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 		if (len_payload <= 168) {
 
 			char stuffed_payload[LEN_FRAME_MAX];
-			int LEN_STUFFED_PAYLOAD = stuff(payload, stuffed_payload, len_payload + LEN_CRC);
+			int len_stuffed_payload = stuff(payload, stuffed_payload, len_payload + LEN_CRC);
 
 			//// frame generation /////
 			char frame[LEN_FRAME_MAX];
@@ -406,13 +406,13 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 			memcpy(frame, PREAMBLE_ASC, LEN_PREAMBLE);
 			memcpy(frame + LEN_PREAMBLE, START_MARK_ASC, LEN_START);
 			// payload + crc
-			memcpy (frame + LEN_PREAMBLE + LEN_START, stuffed_payload, LEN_STUFFED_PAYLOAD);
+			memcpy (frame + LEN_PREAMBLE + LEN_START, stuffed_payload, len_stuffed_payload);
 			// trailer
-			memcpy (frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD, START_MARK_ASC, 8);
+			memcpy (frame+LEN_PREAMBLE+LEN_START+len_stuffed_payload, START_MARK_ASC, 8);
 
 			// padding
-			int LEN_PADDING = LEN_FRAME_MAX-(LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD+LEN_START);
-			memset(frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD+LEN_START, 0x0, LEN_PADDING);
+			int len_padding = LEN_FRAME_MAX-(LEN_PREAMBLE+LEN_START+len_stuffed_payload+LEN_START);
+			memset(frame+LEN_PREAMBLE+LEN_START+len_stuffed_payload+LEN_START, 0x0, len_padding);
 			int len_frame_real = LEN_FRAME_MAX;	// 256
 
 			// NRZI Conversion
@@ -436,23 +436,23 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 		else {
 		
 			char stuffed_payload[1024];
-			int LEN_STUFFED_PAYLOAD = stuff (payload, stuffed_payload, LEN_PAYLOAD+LEN_CRC);
+			int len_stuffed_payload = stuff (payload, stuffed_payload, len_payload+LEN_CRC);
 
 			//// frame generation /////	
-			int LEN_FRAME = LEN_PREAMBLE + LEN_START*2 + LEN_STUFFED_PAYLOAD;
-			char frame[LEN_FRAME];
-			unsigned char byte_frame[LEN_FRAME/8]; //PASTA
-			memset (frame, 0x0, LEN_FRAME);	
+			int len_frame = LEN_PREAMBLE + LEN_START*2 + len_stuffed_payload;
+			char frame[len_frame];
+			unsigned char byte_frame[len_frame/8]; //PASTA
+			memset (frame, 0x0, len_frame);	
 		
 			// headers
 			memcpy (frame, PREAMBLE_ASC, LEN_PREAMBLE);
 			memcpy (frame+LEN_PREAMBLE, START_MARK_ASC, LEN_START);
 			// payload + crc
-			memcpy (frame+LEN_PREAMBLE+LEN_START, stuffed_payload, LEN_STUFFED_PAYLOAD);
+			memcpy (frame+LEN_PREAMBLE+LEN_START, stuffed_payload, len_stuffed_payload);
 			// trailer
-			memcpy (frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD, START_MARK_ASC, 8);
+			memcpy (frame+LEN_PREAMBLE+LEN_START+len_stuffed_payload, START_MARK_ASC, 8);
 		
-			int len_frame_real = LEN_FRAME;	
+			int len_frame_real = len_frame;	
 			
 			// NRZI Conversion
 			nrz_to_nrzi (frame, len_frame_real);
