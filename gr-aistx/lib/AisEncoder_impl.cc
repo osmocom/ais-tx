@@ -40,6 +40,9 @@
 #define PREAMBLE_MARK 101010101010101010101010 (24 bits)
 #define START_MARK 01111110	(8 bits)
 
+#define PREAMBLE_ASC	"\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0"
+#define START_MARK_ASC	"\0\1\1\1\1\1\1\0"
+
 #define DEBUG 0
 
 namespace gr {
@@ -400,12 +403,12 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 			memset(frame, 0x0, LEN_FRAME_MAX);
 
 			// headers
-			memcpy(frame, "\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0", LEN_PREAMBLE);
-			memcpy(frame + LEN_PREAMBLE, "\0\1\1\1\1\1\1\0", LEN_START);
+			memcpy(frame, PREAMBLE_ASC, LEN_PREAMBLE);
+			memcpy(frame + LEN_PREAMBLE, START_MARK_ASC, LEN_START);
 			// payload + crc
 			memcpy (frame + LEN_PREAMBLE + LEN_START, stuffed_payload, LEN_STUFFED_PAYLOAD);
 			// trailer
-			memcpy (frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD, "\0\1\1\1\1\1\1\0", 8);
+			memcpy (frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD, START_MARK_ASC, 8);
 
 			// padding
 			int LEN_PADDING = LEN_FRAME_MAX-(LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD+LEN_START);
@@ -442,12 +445,12 @@ AisEncoder_impl::handle_msg(pmt::pmt_t pdu)
 			memset (frame, 0x0, LEN_FRAME);	
 		
 			// headers
-			memcpy (frame, "\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0\1\0", LEN_PREAMBLE);
-			memcpy (frame+LEN_PREAMBLE, "\0\1\1\1\1\1\1\0", LEN_START);
+			memcpy (frame, PREAMBLE_ASC, LEN_PREAMBLE);
+			memcpy (frame+LEN_PREAMBLE, START_MARK_ASC, LEN_START);
 			// payload + crc
 			memcpy (frame+LEN_PREAMBLE+LEN_START, stuffed_payload, LEN_STUFFED_PAYLOAD);
 			// trailer
-			memcpy (frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD, "\0\1\1\1\1\1\1\0", 8);
+			memcpy (frame+LEN_PREAMBLE+LEN_START+LEN_STUFFED_PAYLOAD, START_MARK_ASC, 8);
 		
 			int len_frame_real = LEN_FRAME;	
 			
